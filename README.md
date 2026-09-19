@@ -1,7 +1,8 @@
-# Responsive Combat SKSE Template
+# Responsive Combat
 
-Responsive Combat is a small CommonLibSSE NG starter project for SKSE plugins.
-The repository is meant to be a clean base for Skyrim combat experiments, not a finished gameplay mod.
+Responsive Combat is an SKSE/CommonLibSSE NG mod in development for configurable baseline attack speed, attack-to-block and attack-to-dodge cancellation, and control over unwanted queued attacks.
+
+The current implementation is still the small, working plugin template. Plugin loading has been verified in Skyrim; the gameplay features are planned, not implemented. See the [incremental development plan](docs/ROADMAP.md) for milestones and acceptance checks, starting with configuration and persistent logging.
 
 The current plugin only initializes SKSE and prints this message to the in-game console once data has loaded:
 
@@ -9,7 +10,7 @@ The current plugin only initializes SKSE and prints this message to the in-game 
 [ResponsiveCombat] Plugin loaded successfully.
 ```
 
-Use this repository when starting a new native SKSE plugin that needs a known-good CMake, vcpkg, and CommonLibSSE NG setup.
+Level-based progression belongs to the separate Level Scaled Actions project. Responsive Combat will provide the configurable baseline, with both mods designed to work independently or together.
 
 ## Requirements
 
