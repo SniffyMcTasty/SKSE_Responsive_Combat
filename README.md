@@ -49,7 +49,16 @@ Example:
 }
 ```
 
-Configure and build from a Visual Studio developer shell:
+From a regular PowerShell terminal, the build script locates Visual Studio's C++ tools, CMake, and Ninja and configures an x64 build:
+
+```powershell
+.\scripts\build.ps1
+.\scripts\build.ps1 -Configuration release
+```
+
+Install the C++ CMake tools component through Visual Studio Installer if CMake or Ninja is missing. The script uses `VCPKG_ROOT` and restores the terminal's environment when finished. No global PATH changes or local user preset are required for this workflow.
+
+Alternatively, configure and build from a Visual Studio developer shell:
 
 ```powershell
 cmake --preset debug
@@ -58,9 +67,19 @@ cmake --build --preset debug
 
 The first configure step lets vcpkg download and build CommonLibSSE NG.
 
+Successful compilation checks the native plugin and its dependencies. There are no automated tests yet; loading the DLL and checking gameplay behavior still requires Skyrim with SKSE.
+
 ## Deploying The Plugin
 
 By default, build output stays inside the local build directory.
+
+The PowerShell build script disables automatic deployment unless `-Deploy` is supplied:
+
+```powershell
+.\scripts\build.ps1 -Configuration release -Deploy
+```
+
+Direct CMake builds use the deployment environment variables whenever they are set.
 
 To deploy directly to a Skyrim install, set `SKYRIM_FOLDER` to the folder that contains `SkyrimSE.exe`:
 
