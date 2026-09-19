@@ -1,5 +1,27 @@
-.idea
-.vs
-.vscode/settings.json
-build
-cmake-build*
+.idea/
+.vs/
+.vscode/
+
+# Local CMake configuration
+CMakeUserPresets.json
+compile_commands.json
+
+# Build output
+build/
+cmake-build*/
+out/
+install/
+CMakeFiles/
+CMakeCache.txt
+
+# vcpkg manifest-mode install tree
+vcpkg_installed/
+
+# Compiled artifacts and logs
+*.dll
+*.exe
+*.lib
+*.obj
+*.pdb
+*.ilk
+*.log
