@@ -11,6 +11,12 @@ The current plugin only initializes SKSE and prints this message to the in-game 
 
 Use this repository when starting a new native SKSE plugin that needs a known-good CMake, vcpkg, and CommonLibSSE NG setup.
 
+## Gameplay Scope
+
+Responsive Combat is intended as a gameplay supplement to Attack MCO/ADXP and Dodge MCO (DMCO), adding configurable attack speed, block and dodge cancellation, and more deliberate attack buffering to the existing combat system.
+
+These gameplay features are planned. The current plugin only verifies SKSE loading; integration requirements and supported versions will be documented as each feature is implemented and tested.
+
 ## Requirements
 
 - Visual Studio 2022 with the Desktop development with C++ workload
