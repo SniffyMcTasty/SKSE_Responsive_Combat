@@ -10,8 +10,6 @@ The current plugin only initializes SKSE and prints this message to the in-game 
 [ResponsiveCombat] Plugin loaded successfully.
 ```
 
-Level-based progression belongs to the separate Level Scaled Actions project. Responsive Combat will provide the configurable baseline, with both mods designed to work independently or together.
-
 ## Gameplay Scope
 
 Responsive Combat is intended as a gameplay supplement to Attack MCO/ADXP and Dodge MCO (DMCO), adding configurable attack speed, block and dodge cancellation, and more deliberate attack buffering to the existing combat system.

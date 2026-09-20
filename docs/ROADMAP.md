@@ -4,19 +4,13 @@
 
 Make player combat feel responsive through configurable baseline attack animation
 speed, attack-to-block and attack-to-dodge cancellation, and control over unwanted
-queued attacks. Start with the existing NGVO/MCO/DMCO test setup and expand
+queued attacks. This is a gameplay supplement to Attack MCO/ADXP and Dodge MCO
+(DMCO). Start with a test setup built around those systems and expand
 compatibility only after verifying it.
-
-Responsive Combat owns baseline responsiveness. Level Scaled Actions owns
-level-based progression, with a neutral 1.0 multiplier at level 1. Either mod must
-work independently. When both are installed, the intended composition is:
-
-`combined attack-speed factor = baseline factor * progression factor`
 
 The implementation must preserve contributions from the game, perks, equipment,
 and other mods. Do not implement this by overwriting a shared value every frame.
 Select a compatible integration point after observing the installed combat stack.
-Perk requirements belong in Perks Beyond 80 and are outside this mod's scope.
 
 ## Verified starting point
 
@@ -82,8 +76,9 @@ Proposed branch: `baseline-attack-speed`
 
 - Implement a bounded, configurable player attack-speed factor. Start testing at
   1.0; compare modest boosts before selecting a release default.
-- Define ownership and composition with Level Scaled Actions so both mods work
-  alone or together and disabling one removes only its contribution.
+- Apply only the configured attack-speed contribution and preserve existing
+  game, perk, and equipment effects. Disabling the feature must remove only its
+  own contribution.
 - Verify animation, hit timing, movement, and recovery stay coherent. Do not
   accidentally accelerate unrelated animations or NPC behavior.
 - Test factor validation/composition outside Skyrim, then test in-game weapon
@@ -142,7 +137,7 @@ Proposed branch: `first-release-validation`
 - Test each feature alone and in combination, including all features disabled.
 - Cover weapon types, camera modes, keyboard/mouse and controller where
   supported, normal/power attacks, stamina, death, menus, and save/reload.
-- Test against a minimal supported setup and the NGVO test profile; document
+- Test against a minimal supported setup and an expanded MCO/DMCO profile; document
   exact tested versions, conflicts, unsupported cases, and reproduction steps.
 - Tune defaults through playtesting, measure logging/per-frame overhead, and ensure
   release logging is bounded.
