@@ -17,7 +17,8 @@ Select a compatible integration point after observing the installed combat stack
 - The native plugin builds in Debug and Release using `scripts/build.ps1`.
 - The console message has been verified in Skyrim: plugin
   discovery, loading, and the data-loaded callback work in the current setup.
-- Gameplay changes and automated tests have not been implemented yet.
+- Gameplay changes have not been implemented. Milestone 1 adds native tests for
+  configuration, logging, and configuration-preserving deployment.
 - Normal script builds do not deploy. Use `-Deploy` explicitly for in-game tests
   through the existing MO2 setup and a disposable test save.
 
@@ -30,6 +31,9 @@ names are proposed; only milestone 1's branch is created now.
 ### 1. Configuration and persistent logging
 
 Branch: `configuration-and-logging`
+
+Status: accepted after Debug/Release tests and in-game verification on Skyrim
+1.6.1170, including the corrected log location and configuration checks.
 
 - Add `ResponsiveCombat.log` through SKSE's resolved log directory. Record plugin
   version, runtime version, initialization, configuration results, and data load.
@@ -149,6 +153,17 @@ configured, disabled, and removed without leaving persistent unintended changes.
 
 ## Current branch scope
 
-This branch currently records the roadmap only. Milestone 1 implementation is the
-next development task. The prior console-load test is complete and does not need
-to be repeated as a new prerequisite; regression checks still accompany new DLLs.
+Milestone 1 now implements startup INI loading, validation, rotating file logging,
+debugger fallback, and automated tests. PowerShell builds run CTest and only
+deploy afterward when requested; deployment preserves an existing INI. No combat
+behavior is changed.
+
+Debug and Release builds pass all 15 CTest cases, including the CommonLibSSE
+log-directory correction for Skyrim 1.6.1170. The full PowerShell deployment
+workflow has been verified against a temporary destination, including DLL and
+example-configuration hashes. The corrected Release DLL has also been deployed
+to the game setup, with its hash verified and the installed INI unchanged.
+
+Milestone 1 is accepted. Startup logging, the corrected log directory,
+configuration behavior, and the data-loaded callback have been verified in-game
+on Skyrim 1.6.1170. Combat behavior is unchanged.

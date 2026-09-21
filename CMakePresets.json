@@ -31,6 +31,10 @@
             "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
         }
     ],
+    "testPresets": [
+        { "name": "debug", "configurePreset": "debug" },
+        { "name": "release", "configurePreset": "release" }
+    ],
     "buildPresets": [
         {
             "name": "debug",

@@ -35,6 +35,7 @@ try {
     $cmakeTools = Join-Path $vsPath 'Common7\IDE\CommonExtensions\Microsoft\CMake'
     $env:PATH = "$(Join-Path $cmakeTools 'CMake\bin');$(Join-Path $cmakeTools 'Ninja');$env:PATH"
     $cmake = (Get-Command cmake.exe -ErrorAction Stop).Source
+    $ctest = Join-Path (Split-Path $cmake -Parent) 'ctest.exe'
     if (-not $env:VCPKG_ROOT -or -not (Test-Path (Join-Path $env:VCPKG_ROOT 'scripts\buildsystems\vcpkg.cmake'))) {
         throw 'Set VCPKG_ROOT to your vcpkg checkout before building.'
     }
@@ -44,10 +45,16 @@ try {
         Remove-Item Env:SKYRIM_FOLDER, Env:SKYRIM_MODS_FOLDER -ErrorAction SilentlyContinue
     }
 
-    & $cmake --preset $Configuration
+    & $cmake --preset $Configuration -DBUILD_TESTING=ON
     if ($LASTEXITCODE -ne 0) { throw 'CMake configure failed.' }
     & $cmake --build --preset $Configuration
     if ($LASTEXITCODE -ne 0) { throw 'CMake build failed.' }
+    & $ctest --preset $Configuration --output-on-failure --no-tests=error
+    if ($LASTEXITCODE -ne 0) { throw 'CTest failed.' }
+    if ($Deploy) {
+        & $cmake --build --preset $Configuration --target deploy
+        if ($LASTEXITCODE -ne 0) { throw 'Deployment failed. Check SKYRIM_FOLDER or SKYRIM_MODS_FOLDER.' }
+    }
 }
 finally {
     Pop-Location
