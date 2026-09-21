@@ -144,8 +144,54 @@ and concurrent recorder access, alongside the milestone 1 tests. The Release DLL
 has been deployed with the installed INI unchanged. These native checks do not
 verify in-game event coverage or the selected animation set.
 
-No in-game milestone 2 trace or phase mapping is verified yet. Use the capture to
-establish:
+### Verified Capture: 2026-09-21
+
+The enabled run starts at 11:53:38 and contains 2,443 observation records across
+two loaded-save sessions: 2,262 animation, 79 state, 66 menu, 17 action, 10 hit,
+and 9 lifecycle records. Graph registration succeeds in both sessions. Player
+death and the subsequent pre-load/new-session boundary are present. No warning,
+error, critical, or rate-limit suppression records appear in this capture.
+
+The later run starts at 12:00:18 with `TraceCombat=false` and contains only
+startup/data-loaded messages, with no observation records. The disabled-tracing
+check is verified.
+
+One third-person attack sequence in session 1 provides these reference points:
+
+| Elapsed time | Observed event |
+| --- | --- |
+| 25,124 ms | Native state `draw` |
+| 25,134 ms | `MCO_AttackInitiate` |
+| 25,329 ms | `MCO_InputBuffer` and `preHitFrame` |
+| 25,512 ms | SKSE weapon-swing action |
+| 25,585 ms | `HitFrame` |
+| 25,657 ms | Outgoing hit notification |
+| 25,975 ms | `MCO_WinOpen` and `MCO_PowerWinOpen` |
+| 26,121 ms | Another `MCO_AttackInitiate` |
+
+The full capture also includes `MCO_Recovery`, `attackStop`, native return to
+`none`, blocking/bashing, and `MCO_DodgeInitiate`. These establish useful event
+coverage, not yet a complete phase or cancellation model.
+
+Known gaps carried forward:
+
+- No `source=input` records were captured. Investigate input filtering and event
+  delivery before correlating presses/releases with queued attacks.
+- Many animation tags appear in same-timestamp pairs. Their source needs to be
+  identified before treating them as independent events or deduplicating them.
+- No `first_person=true` state or `power=true` hit record is present. First-person
+  and successful power-hit coverage are not established by this file.
+- Exact winning moveset identity, low-stamina dodge rejection, and the cause of
+  late queued attacks cannot be concluded from the available evidence alone.
+
+The observation baseline is accepted for the next milestone, with these limits
+explicitly retained. Copies of the enabled and disabled captures are preserved
+locally under ignored `build/verification/milestone2/`; raw logs are not committed.
+
+### Further Interpretation
+
+Before selecting gameplay integration points, use the capture and targeted
+follow-up tests to establish:
 
 - Windup: the attack-specific graph transition after input and before a swing.
 - Contact: observed animation markers correlated with outgoing hit notifications.
@@ -157,6 +203,7 @@ establish:
   another input handler, or an animation transition. A trace alone cannot prove
   which plugin consumed an input before this observer received it.
 
-Only after those checks should this milestone be accepted and the next branch
-choose integration points. Keep logs, saves, and machine-specific configuration
-out of source control.
+Resolve the relevant evidence gaps before choosing integration points or claiming
+input buffering/cancellation compatibility. No gameplay implementation is part
+of this verification checkpoint. Keep logs, saves, and machine-specific
+configuration out of source control.

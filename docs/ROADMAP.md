@@ -25,9 +25,10 @@ Select a compatible integration point after observing the installed combat stack
 ## Delivery sequence
 
 Each milestone gets a branch from the latest accepted `main`. Build it, verify its
-acceptance criteria, then merge before starting the next milestone. Milestone 1
-is accepted on `main`; milestone 2 is developed on `combat-state-observation`.
-Later branch names are proposed.
+acceptance criteria, then merge before starting the next milestone. Milestones 1
+and 2 form the accepted baseline on `main`, with the observation gaps below
+carried forward explicitly. The next branch is `baseline-attack-speed`;
+implementation has not started. Later branch names are proposed.
 
 ### 1. Configuration and persistent logging
 
@@ -61,8 +62,11 @@ or invalid configuration has predictable results. Combat behavior is unchanged.
 
 Branch: `combat-state-observation`
 
-Status: passive trace collection implemented; in-game trace capture and phase
-mapping remain pending. See [Combat Observation](COMBAT_OBSERVATION.md).
+Status: accepted as the passive observation baseline after the 2026-09-21
+in-game capture and disabled-tracing check. Input records are absent from the
+capture, so input/queue correlation is not verified. Paired animation events,
+first-person coverage, and power-hit coverage remain follow-up checks. See
+[Combat Observation](COMBAT_OBSERVATION.md) for evidence and limitations.
 
 Verification: version 0.0.2 builds in Debug and Release with all 23 CTest cases
 passing. The Release DLL is deployed for testing, with its hash verified and the
@@ -84,7 +88,10 @@ dodge, and unwanted queued attacks in the current setup without altering combat.
 
 ### 3. Configurable baseline attack speed
 
-Proposed branch: `baseline-attack-speed`
+Branch: `baseline-attack-speed`
+
+Status: branch prepared from the accepted baseline; implementation not started.
+Review the recorded observation gaps before selecting an integration point.
 
 - Implement a bounded, configurable player attack-speed factor. Start testing at
   1.0; compare modest boosts before selecting a release default.
@@ -167,8 +174,12 @@ tracing. Native state changes are sampled on input dispatch, no faster than ever
 and independent per-source rate limits. Startup configuration and logging remain
 available with combat observation disabled.
 
-There are no gameplay hooks, input consumption, animation writes, attack-speed
-changes, or cancellation rules. Exact windup, contact, recovery, dodge acceptance,
-and queue behavior must be identified from an in-game trace before selecting
-integration points for the next milestones. Raw event names are recorded without
-assuming that a vanilla or MCO event necessarily marks one of those phases.
+The enabled capture confirms animation, action, hit, state, menu, death, and
+reload records. The disabled capture contains startup messages only. Missing
+input records and repeated animation tags are documented rather than treated as
+verified input timing or independent attacks.
+
+Milestone 3 has not started. There are no gameplay hooks, input consumption,
+animation writes, attack-speed changes, or cancellation rules. Detailed phase
+mapping and integration selection remain future work, using the captured
+evidence and its recorded limitations.
