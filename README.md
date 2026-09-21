@@ -2,7 +2,7 @@
 
 Responsive Combat is an SKSE/CommonLibSSE NG mod in development for configurable baseline attack speed, attack-to-block and attack-to-dodge cancellation, and control over unwanted queued attacks.
 
-The first milestone adds startup configuration and persistent logging to the working plugin. Gameplay features are planned, not implemented. See the [incremental development plan](docs/ROADMAP.md) for milestones and acceptance checks.
+Milestone 1 provides verified startup configuration and persistent logging. Milestone 2 adds opt-in, passive combat observation for collecting input and animation traces. Gameplay changes are planned, not implemented. See the [incremental development plan](docs/ROADMAP.md) for milestones and acceptance checks.
 
 The plugin initializes SKSE, reads configuration, logs startup diagnostics, and keeps the existing in-game console message once data has loaded:
 
@@ -119,13 +119,17 @@ Enabled=true
 
 [Logging]
 LogLevel=info
+
+[Diagnostics]
+TraceCombat=false
 ```
 
 Settings are read once at startup. Restart Skyrim after editing the INI; there is no live reload or MCM yet.
 
 - `SchemaVersion`: currently `1`. A missing version assumes schema 1. An unsupported or invalid version rejects the entire file and uses defaults.
-- `Enabled`: `true` or `false` (also `1` or `0`), default `true`. This is the master flag for future gameplay features. It does not unload the plugin or disable diagnostics. Both values leave combat unchanged in this milestone.
+- `Enabled`: `true` or `false` (also `1` or `0`), default `true`. This is the master flag for combat observation and future gameplay features. It does not unload the plugin or disable startup diagnostics. Both values leave combat unchanged in this milestone.
 - `LogLevel`: `trace`, `debug`, `info`, `warn`, `error`, `critical`, or `off`; default `info`. Startup configuration and initialization diagnostics are always recorded, then this filter applies to subsequent messages, including data load.
+- `TraceCombat`: `true` or `false` (also `1` or `0`), default `false`. Enables passive observation only when `Enabled=true` and `LogLevel` is `info`, `debug`, or `trace`. It never sends inputs, changes animation variables, or alters attacks. See the [observation checklist](docs/COMBAT_OBSERVATION.md) before collecting a trace.
 
 Section names, keys, boolean values, and log levels are case-insensitive. Missing files or settings use defaults. Invalid individual values use their own defaults while retaining other valid settings. Unknown keys are ignored with a warning. Malformed INI syntax, duplicate keys, and multiline values reject the entire file. Diagnostics are emitted once during startup, and loading never creates or rewrites an INI.
 

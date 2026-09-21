@@ -23,6 +23,7 @@ namespace {
     {
         Require(result.settings.enabled, "Expected Enabled=true");
         Require(result.settings.logLevel == LogLevel::info, "Expected LogLevel=info");
+        Require(!result.settings.traceCombat, "Observation must be opt-in");
     }
 
     struct TemporaryDirectory {
@@ -77,6 +78,20 @@ namespace {
             Require(result.status == ConfigStatus::loaded && result.diagnostics.empty(), "Valid file should load quietly");
             Require(!ParseConfig("[General]\nEnabled=0").settings.enabled, "Numeric false failed");
             Require(ParseConfig("[General]\nEnabled=1").settings.enabled, "Numeric true failed");
+        } else if (name == "diagnostic-config") {
+            for (const auto value : {"true", "TRUE", "1"}) {
+                const auto result = ParseConfig(std::string("[Diagnostics]\nTraceCombat=") + value);
+                Require(result.settings.traceCombat && result.diagnostics.empty(), "Observation opt-in failed");
+            }
+            for (const auto value : {"false", "FALSE", "0"}) {
+                const auto result = ParseConfig(std::string("[Diagnostics]\nTraceCombat=") + value);
+                Require(!result.settings.traceCombat && result.diagnostics.empty(), "Observation opt-out failed");
+            }
+            const auto invalid = ParseConfig("[Diagnostics]\nTraceCombat=yes");
+            Defaults(invalid);
+            Require(invalid.diagnostics.size() == 1, "Invalid observation flag must be diagnosed once");
+            const auto disabled = ParseConfig("[General]\nEnabled=false\n[Diagnostics]\nTraceCombat=true");
+            Require(!disabled.settings.enabled && disabled.settings.traceCombat, "Master flag and diagnostic preference must be independent");
         } else if (name == "levels") {
             constexpr std::array levels{LogLevel::trace, LogLevel::debug, LogLevel::info, LogLevel::warn,
                 LogLevel::error, LogLevel::critical, LogLevel::off};

@@ -11,6 +11,7 @@ namespace ResponsiveCombat {
     struct Settings {
         bool enabled{true};
         LogLevel logLevel{LogLevel::info};
+        bool traceCombat{false};
     };
 
     enum class ConfigStatus { missing, loaded, rejected };

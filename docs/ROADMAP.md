@@ -25,8 +25,9 @@ Select a compatible integration point after observing the installed combat stack
 ## Delivery sequence
 
 Each milestone gets a branch from the latest accepted `main`. Build it, verify its
-acceptance criteria, then merge before starting the next milestone. Later branch
-names are proposed; only milestone 1's branch is created now.
+acceptance criteria, then merge before starting the next milestone. Milestone 1
+is accepted on `main`; milestone 2 is developed on `combat-state-observation`.
+Later branch names are proposed.
 
 ### 1. Configuration and persistent logging
 
@@ -58,7 +59,14 @@ or invalid configuration has predictable results. Combat behavior is unchanged.
 
 ### 2. Observe combat input and animation state
 
-Proposed branch: `combat-state-observation`
+Branch: `combat-state-observation`
+
+Status: passive trace collection implemented; in-game trace capture and phase
+mapping remain pending. See [Combat Observation](COMBAT_OBSERVATION.md).
+
+Verification: version 0.0.2 builds in Debug and Release with all 23 CTest cases
+passing. The Release DLL is deployed for testing, with its hash verified and the
+installed INI preserved. Recording remains opt-in.
 
 - Record the actual Skyrim, SKSE, MCO, DMCO, power-attack input, and relevant
   moveset versions in the test setup. Verify installed versions before making
@@ -153,17 +161,14 @@ configured, disabled, and removed without leaving persistent unintended changes.
 
 ## Current branch scope
 
-Milestone 1 now implements startup INI loading, validation, rotating file logging,
-debugger fallback, and automated tests. PowerShell builds run CTest and only
-deploy afterward when requested; deployment preserves an existing INI. No combat
-behavior is changed.
+Milestone 2 adds opt-in player input, animation, action, hit, menu, and lifecycle
+tracing. Native state changes are sampled on input dispatch, no faster than every
+50 ms. Trace records have session IDs, sequence numbers, monotonic elapsed time,
+and independent per-source rate limits. Startup configuration and logging remain
+available with combat observation disabled.
 
-Debug and Release builds pass all 15 CTest cases, including the CommonLibSSE
-log-directory correction for Skyrim 1.6.1170. The full PowerShell deployment
-workflow has been verified against a temporary destination, including DLL and
-example-configuration hashes. The corrected Release DLL has also been deployed
-to the game setup, with its hash verified and the installed INI unchanged.
-
-Milestone 1 is accepted. Startup logging, the corrected log directory,
-configuration behavior, and the data-loaded callback have been verified in-game
-on Skyrim 1.6.1170. Combat behavior is unchanged.
+There are no gameplay hooks, input consumption, animation writes, attack-speed
+changes, or cancellation rules. Exact windup, contact, recovery, dodge acceptance,
+and queue behavior must be identified from an in-game trace before selecting
+integration points for the next milestones. Raw event names are recorded without
+assuming that a vanilla or MCO event necessarily marks one of those phases.

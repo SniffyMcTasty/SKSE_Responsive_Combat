@@ -109,6 +109,14 @@ namespace ResponsiveCombat {
                 } else {
                     result.diagnostics.emplace_back("Invalid General.Enabled; using true.");
                 }
+            } else if (key == "diagnostics.tracecombat") {
+                if (normalized == "true" || normalized == "1") {
+                    result.settings.traceCombat = true;
+                } else if (normalized == "false" || normalized == "0") {
+                    result.settings.traceCombat = false;
+                } else {
+                    result.diagnostics.emplace_back("Invalid Diagnostics.TraceCombat; using false.");
+                }
             } else if (key == "logging.loglevel") {
                 std::optional<LogLevel> level;
                 for (std::size_t i = 0; i < levelNames.size(); ++i) {

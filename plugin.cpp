@@ -1,5 +1,6 @@
 #include "src/Config.h"
 #include "src/Logging.h"
+#include "src/CombatObserver.h"
 
 #include <Windows.h>
 
@@ -22,10 +23,14 @@ namespace {
 
     void OnMessage(SKSE::MessagingInterface::Message* message) noexcept
     {
-        if (!message || message->type != SKSE::MessagingInterface::kDataLoaded) {
+        if (!message) {
             return;
         }
         try {
+            ResponsiveCombat::HandleObservationMessage(*message, settings);
+            if (message->type != SKSE::MessagingInterface::kDataLoaded) {
+                return;
+            }
             spdlog::info("Game data loaded. Enabled={}. No gameplay hooks are installed in this milestone.", settings.enabled);
             spdlog::default_logger()->flush();
             if (auto* console = RE::ConsoleLog::GetSingleton()) {
@@ -93,8 +98,12 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse)
             spdlog::warn("Configuration unavailable: {}; using defaults.", error.what());
         }
 
-        spdlog::info("Settings: SchemaVersion=1, Enabled={}, LogLevel={}.",
-            settings.enabled, ResponsiveCombat::LogLevelName(settings.logLevel));
+        spdlog::info("Settings: SchemaVersion=1, Enabled={}, LogLevel={}, TraceCombat={}.",
+            settings.enabled, ResponsiveCombat::LogLevelName(settings.logLevel), settings.traceCombat);
+        spdlog::info("SKSE version (packed): {:08X}.", skse->SKSEVersion());
+        if (settings.traceCombat && settings.logLevel > ResponsiveCombat::LogLevel::info) {
+            spdlog::warn("Combat observation requires LogLevel=info, debug, or trace; observers will remain inactive.");
+        }
         spdlog::info("Gameplay behavior is unchanged; no gameplay hooks are installed.");
         const auto* messaging = SKSE::GetMessagingInterface();
         if (!messaging || !messaging->RegisterListener(OnMessage)) {
